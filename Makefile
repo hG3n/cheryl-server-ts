@@ -1,8 +1,5 @@
 all:
-	tsc
-
-run:
-	npm start
+	tsc && npm start
 
 clean:
 	rm -rf build
