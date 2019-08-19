@@ -1,16 +1,12 @@
-import {Request} from "express";
+import {Message} from "./Message";
+import {setSystemVolume} from "../volume/VolumeController";
+import {setEqualizerLevel} from "../equalizer/EqualizerController";
 
-export const volume = (ws, req: Request) => {
-    ws.on("open", () => {
-        console.log('opened');
-    });
+export const discreteVolume = async (msg: Message) => {
+    return await setSystemVolume(msg.data['volume']);
+};
 
-    ws.on("message", (msg) => {
-        console.log('message', msg);
-    });
-
-    ws.on("close", () => {
-        console.log('closed');
-    });
+export const equalizerLevel = async (msg: Message) => {
+    return await setEqualizerLevel(msg.data['position'], msg.data['value']);
 };
 
