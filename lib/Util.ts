@@ -1,3 +1,5 @@
+import * as moment from "moment";
+
 export const extractVolumeLevel = (stdout: string): object => {
     const lines: string[] = stdout.split("\n");
 
@@ -59,6 +61,8 @@ export const extractStatus = (stdout: string): object => {
                 const active_since = line.split('since')[1].split(';')[0].trim();
                 const first_space_idx = active_since.indexOf(' ');
                 const date_str = active_since.slice(first_space_idx+1, active_since.length);
+                const mom = moment.default(date_str);
+                console.log(mom);
                 result.active_since = date_str;
             }
 
