@@ -9,6 +9,10 @@ export const constants = {
         equalizer: {
             get: 'sudo -u raspotify amixer -D equal sget',
             set: 'sudo -u raspotify amixer -D equal sset'
+        },
+        system: {
+            restart: 'sudo service raspotify restart',
+            status: 'sudo service raspotify status'
         }
     },
     equalizer: {

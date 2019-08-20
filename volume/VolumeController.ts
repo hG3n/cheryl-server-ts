@@ -3,7 +3,7 @@ import {exec} from 'child_process';
 import {constants} from '../constants';
 import {extractVolumeLevel} from "../lib/Util";
 
-export const volume = async (req: Request, res: Response) => {
+export const volume = async (req: Request, res: Response): Promise<Response> => {
     try {
         let result = await getSystemVolume();
         if (result) return res.status(200).send(result);
@@ -15,9 +15,9 @@ export const volume = async (req: Request, res: Response) => {
     }
 };
 
-export const discrete = async (req: Request, res: Response) => {
+export const discrete = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const result = await setSystemVolume(req.params['volume']);
+        const result: Promise<any> = await setSystemVolume(req.params['volume']);
         if (result) return res.status(200).send(result);
         return res.status(500).send({success: false, message: "Error executing command!"});
     } catch (error) {
@@ -26,9 +26,9 @@ export const discrete = async (req: Request, res: Response) => {
     }
 };
 
-export const raise = async (req: Request, res: Response) => {
+export const raise = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const result = await setRelativeSystemVolume('+', req.body.precision);
+        const result: Promise<any> = await setRelativeSystemVolume('+', req.body.precision);
         if (result) return res.status(200).send(result);
         return res.status(500).send({success: false, message: "Error setting value!"});
     } catch (error) {
@@ -37,9 +37,9 @@ export const raise = async (req: Request, res: Response) => {
     }
 };
 
-export const lower = async (req: Request, res: Response) => {
+export const lower = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const result = await setRelativeSystemVolume('-', req.body.precision);
+        const result: Promise<any> = await setRelativeSystemVolume('-', req.body.precision);
         if (result) return res.status(200).send(result);
         return res.status(500).send({success: false, message: "Error setting value!"});
     } catch (error) {
@@ -48,9 +48,9 @@ export const lower = async (req: Request, res: Response) => {
     }
 };
 
-export const mute = async (req: Request, res: Response) => {
+export const mute = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const result = await muteSystem();
+        const result: Promise<any> = await muteSystem();
         if (result) return res.status(200).send(result);
         return res.status(500).send({success: false, message: "Error executing Command"});
     } catch (error) {
@@ -59,8 +59,8 @@ export const mute = async (req: Request, res: Response) => {
     }
 };
 
-export const setSystemVolume = (volume) => {
-    const command = constants.commands.volume.set + ` ${volume}%`;
+export const setSystemVolume = (volume): Promise<any> => {
+    const command: string= constants.commands.volume.set + ` ${volume}%`;
     return new Promise((resolve, reject) => {
         exec(command, (err, stdout, stderr) => {
             if (err) {
@@ -73,7 +73,7 @@ export const setSystemVolume = (volume) => {
 };
 
 function getSystemVolume() {
-    const command = constants.commands.volume.get;
+    const command: string= constants.commands.volume.get;
     return new Promise((resolve, reject) => {
         exec(command, (error, stdout, stderr) => {
             if (error) {
@@ -86,9 +86,9 @@ function getSystemVolume() {
 }
 
 
-function setRelativeSystemVolume(prefix, precise) {
-    let value = precise ? '2%' : '5%';
-    const command = constants.commands.volume.set + ` ${value}${prefix}`;
+function setRelativeSystemVolume(prefix, precise): Promise<any> {
+    let value: string = precise ? '2%' : '5%';
+    const command: string = constants.commands.volume.set + ` ${value}${prefix}`;
     return new Promise((resolve, reject) => {
         exec(command, (err, stdout, stderr) => {
             if (err) {
@@ -101,8 +101,8 @@ function setRelativeSystemVolume(prefix, precise) {
     });
 }
 
-function muteSystem() {
-    const command = constants.commands.volume.toggle;
+function muteSystem(): Promise<any> {
+    const command: string= constants.commands.volume.toggle;
     return new Promise((resolve, reject) => {
         exec(command, (err, stdout, stderr) => {
             if (err) {
@@ -111,7 +111,6 @@ function muteSystem() {
             }
             resolve(extractVolumeLevel(stdout));
         });
-
     });
 }
 

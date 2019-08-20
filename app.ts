@@ -5,14 +5,12 @@ import * as bodyParser from "body-parser";
 import * as WebSocket from "ws";
 import morgan = require("morgan");
 
-import * as SocketController from "./socket/SocketController";
 import * as InfoController from "./info/InfoController";
 import * as VolumeController from './volume/VolumeController';
 import * as EqualizerController from './equalizer/EqualizerController';
-import {discreteVolume, equalizerLevel} from "./socket/SocketController";
+import * as SocketController from './socket/SocketController';
+import * as SystemController from './system/SystemController';
 import {Message} from "./socket/Message";
-import {log} from "util";
-import {setEqualizerLevel} from "./equalizer/EqualizerController";
 
 
 // create app
@@ -20,8 +18,8 @@ const app: Application = express();
 let port = process.env.PORT || config.get('server.port');
 
 // create server and socket
-const server = http.createServer(app);
-const wss = new WebSocket.Server({server, path: '/socket'});
+const server: http.Server = http.createServer(app);
+const wss: WebSocket.Server = new WebSocket.Server({server, path: '/socket'});
 
 // app setting
 app.use(morgan('dev'));
@@ -42,13 +40,18 @@ app.put('/volume/mute', VolumeController.mute);
 app.get('/equalizer', EqualizerController.equalizers);
 app.post('/equalizer/:position/:value', EqualizerController.value);
 
+// system
+app.put('/system/restart', SystemController.restart);
+app.get('/system/status', SystemController.status);
+
+// sockets
 wss.on('connection', (ws: WebSocket) => {
     ws.on('message', (message_str: string) => {
         const message: Message = JSON.parse(message_str) as Message;
 
         if (message.context === 'volume') {
             if (message.method === 'set') {
-                discreteVolume(message).then((success) => {
+                SocketController.discreteVolume(message).then((success) => {
                     const result = JSON.stringify(success);
                     const msg: Message = {
                         method: 'res',
@@ -60,7 +63,7 @@ wss.on('connection', (ws: WebSocket) => {
             }
         } else if (message.context === 'equalizer') {
             if (message.method === 'set') {
-                equalizerLevel(message).then((success) => {
+                SocketController.equalizerLevel(message).then((success) => {
                     const result = JSON.stringify(success);
                     const msg: Message = {
                         method: 'res',

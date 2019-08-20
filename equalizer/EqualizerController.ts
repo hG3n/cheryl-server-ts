@@ -3,7 +3,7 @@ import {exec} from 'child_process';
 import {constants} from '../constants';
 import {extractVolumeLevel} from "../lib/Util";
 
-export const equalizers = async (req: Request, res: Response) => {
+export const equalizers = async (req: Request, res: Response):Promise<any> => {
     try {
         let result = getEqualizerLevel();
         Promise.all(result).then(
@@ -18,7 +18,7 @@ export const equalizers = async (req: Request, res: Response) => {
     }
 };
 
-export const value = async (req: Request, res: Response) => {
+export const value = async (req: Request, res: Response):Promise<any> => {
     try {
         const result = await setEqualizerLevel(req.params['position'], req.params['value']);
         if (result) return res.status(200).send(result);
@@ -29,7 +29,7 @@ export const value = async (req: Request, res: Response) => {
     }
 };
 
-// export const presets = async (req: Request, res: Response) => {
+// export const presets = async (req: Request, res: Response):Promise<any> => {
 //     try {
 //         const result = await setRelativeSystemVolume('-', req.body.precision).then(
 //             (value) => {
