@@ -10,6 +10,7 @@ import * as VolumeController from './volume/VolumeController';
 import * as EqualizerController from './equalizer/EqualizerController';
 import * as SocketController from './socket/SocketController';
 import * as SystemController from './system/SystemController';
+import * as SpotiyController from './spotify/SpotifyController';
 import {Message} from "./socket/Message";
 
 
@@ -43,6 +44,9 @@ app.post('/equalizer/:position/:value', EqualizerController.value);
 // system
 app.put('/system/restart', SystemController.restart);
 app.get('/system/status', SystemController.status);
+
+// spotify
+app.get('/spotify/uri_info', SpotiyController.uri_info);
 
 // sockets
 wss.on('connection', (ws: WebSocket) => {

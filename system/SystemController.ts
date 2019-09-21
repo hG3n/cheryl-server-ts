@@ -34,7 +34,7 @@ function getRaspotifyStatus(): Promise<any> {
                 console.log("Error executing:", command);
                 reject({success: false});
             }
-            const result = extractStatus(stdout)
+            const result = extractStatus(stdout);
             resolve(result);
         });
     });
